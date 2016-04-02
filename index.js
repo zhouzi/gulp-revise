@@ -31,8 +31,9 @@ module.exports = function revision () {
     // the original file's path property is mutated
     // after it has been pushed so it now holds its new path
     var newPathToOriginalFile = path.dirname(originalFile.path);
-    var newOriginalFileName = path.basename(originalFile.path);
     var pathToRevision = path.join(newPathToOriginalFile, originalFileName + '.rev');
+
+    var newOriginalFileName = path.basename(originalFile.path);
 
     // by cloning the original file
     // we do not have to pull the vinyl package
@@ -40,8 +41,8 @@ module.exports = function revision () {
     // e.g: https://github.com/floridoo/gulp-sourcemaps/blob/master/index.js#L318
     var revisionFile = originalFile.clone({ contents: false });
 
-    revisionFile.path = pathToRevision;
     revisionFile.contents = new Buffer(newOriginalFileName);
+    revisionFile.path = pathToRevision;
     this.push(revisionFile);
 
     fs.readFile(pathToRevision, 'utf8', function (err, oldFileName) {
