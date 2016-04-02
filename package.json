@@ -1,0 +1,17 @@
+{
+  "name": "gulp-revision",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "Wizbii <dev@wizbii.com> (http://www.wizbii.com/)",
+  "license": "MIT",
+  "scripts": {
+    "test": "gulp --gulpfile test/gulpfile.js"
+  },
+  "devDependencies": {
+    "gulp": "3.9.1"
+  },
+  "dependencies": {
+    "rev-hash": "1.0.0"
+  }
+}
