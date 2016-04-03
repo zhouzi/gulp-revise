@@ -46,11 +46,6 @@ function write (pth) {
         return;
       }
 
-      if (path.extname(file.path) == '.map') {
-        callback();
-        return;
-      }
-
       var originalName = path.basename(file.beforeRev);
       var revisionDir = path.dirname(file.path);
       var revisionName = originalName + '.rev';
