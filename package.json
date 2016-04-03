@@ -13,6 +13,7 @@
     "gulp-sourcemaps": "1.6.0"
   },
   "dependencies": {
+    "del": "2.2.0",
     "gulp-util": "3.0.7",
     "rev-hash": "1.0.0",
     "through2": "2.0.1"

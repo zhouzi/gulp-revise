@@ -3,6 +3,7 @@ var path = require('path');
 var revHash = require('rev-hash');
 var through = require('through2');
 var gutil = require('gulp-util');
+var del = require('del');
 
 // we need to implement a custom rename function
 // to deal with file names such as scripts.js.map
@@ -35,7 +36,7 @@ function revision () {
   );
 }
 
-function write () {
+function write (pth) {
   return through.obj(
     function transform (file, encoding, callback) {
       this.push(file);
@@ -52,7 +53,8 @@ function write () {
 
       var originalName = path.basename(file.beforeRev);
       var revisionDir = path.dirname(file.path);
-      var revisionPath = path.join(revisionDir, originalName + '.rev');
+      var revisionName = originalName + '.rev';
+      var revisionPath = path.join(revisionDir, revisionName);
       var newRevisionName = path.basename(file.path);
 
       var revisionFile = new gutil.File();
@@ -60,22 +62,28 @@ function write () {
       revisionFile.contents = new Buffer(newRevisionName);
       this.push(revisionFile);
 
-      fs.readFile(revisionPath, 'utf8', function (err, oldRevisionName) {
+      if (pth == null) {
+        callback();
+        return;
+      }
+
+      var outputDir = path.join(process.cwd(), pth);
+      var pathToRevision = path.join(outputDir, revisionName);
+      fs.readFile(pathToRevision, 'utf8', function (err, currentVersion) {
         if (err) {
-          // the revision file doesn't exist
           callback();
           return;
         }
 
-        if (newRevisionName == oldRevisionName) {
-          // if the old file name is the same as the new one
-          // then we shouldn't delete it
+        if (newRevisionName == currentVersion) {
           callback();
           return;
         }
 
-        var oldRevisionPath = path.join(revisionDir, oldRevisionName);
-        fs.unlink(oldRevisionPath, function () {
+        del([
+          path.join(outputDir, currentVersion),
+          path.join(outputDir, currentVersion + '.map')
+        ]).then(function () {
           callback();
         });
       });

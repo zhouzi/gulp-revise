@@ -8,7 +8,7 @@ gulp.task('default', function () {
     .pipe(sourcemaps.init())
     .pipe(revision())
     .pipe(sourcemaps.write('.'))
-    .pipe(revision.write())
+    .pipe(revision.write('dist'))
     .pipe(gulp.dest('dist'))
   ;
 });
