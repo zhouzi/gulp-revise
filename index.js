@@ -11,7 +11,7 @@ function rename (name, suffix) {
   var fileName = path.basename(name);
   var partials = fileName.split('.');
   var root = partials[0];
-  var exts = '.' + partials.slice(1).join('.');
+  var exts = partials.slice(1).map(function (ext) { return '.' + ext; }).join('');
 
   return path.join(dir, root + '_' + suffix + exts);
 }
