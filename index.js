@@ -26,40 +26,49 @@ module.exports = function revision () {
     // to create the revision file
     var originalFileName = path.basename(originalFile.path);
 
-    var hash;
-    var isSourceMap = path.extname(originalFileName) == '.map';
-
-    if (isSourceMap) {
+    if (path.extname(originalFileName) == '.map') {
+      // we need to update sourcemaps' name and props
       var correspondingFile = JSON.parse(originalFile.contents.toString()).file;
 
       if (files.hasOwnProperty(correspondingFile)) {
-        hash = files[correspondingFile];
-      } else {
-        sourcemaps[correspondingFile] = originalFile;
+        // if the corresponding file has already gone through
+        // the stream, it's stored in the files map
+        // we can retrieve it and update the sourcemap accordingly
+        var correspondigFileHash = files[correspondingFile];
+        originalFile.path = rename(originalFile.path, correspondigFileHash);
+        this.push(originalFile);
         callback();
         return;
       }
-    }
 
-    if (hash == null) {
-      hash = revHash(originalFile.contents);
-    }
+      // the corresponding file didn't go through
+      // the stream yet so just record this file for later
+      sourcemaps[correspondingFile] = originalFile;
 
-    originalFile.path = rename(originalFile.path, hash);
-    this.push(originalFile);
-
-    if (isSourceMap) {
+      // we don't need to go further as we don't want
+      // to build a .rev file for the sourcemaps
       callback();
       return;
     }
 
+    // to this point we're dealing with any non-sourcemaps files
+    var hash = revHash(originalFile.contents);
+    originalFile.path = rename(originalFile.path, hash);
+    this.push(originalFile);
+
     if (sourcemaps.hasOwnProperty(originalFileName)) {
+      // there's a sourcemap stored for this file
+      // so we need to update and push it
       var sourcemap = sourcemaps[originalFileName];
       sourcemap.path = rename(sourcemap.path, hash);
       this.push(sourcemap);
     } else {
+      // there's no sourcemap for this file but record
+      // the file in case we encounter one later
       files[originalFileName] = hash;
     }
+
+    // and here we go with building the .rev file
 
     // the original file's path property is mutated
     // after it has been pushed so it now holds its new path
