@@ -18,15 +18,48 @@ function rename (name, suffix) {
 
 module.exports = function revision () {
   var stream = new Transform({ objectMode: true });
+  var files = {};
+  var sourcemaps = {};
 
   stream._transform = function (originalFile, encoding, callback) {
     // we need to backup the original file's name
     // to create the revision file
     var originalFileName = path.basename(originalFile.path);
 
-    var hash = revHash(originalFile.contents);
+    var hash;
+    var isSourceMap = path.extname(originalFileName) == '.map';
+
+    if (isSourceMap) {
+      var correspondingFile = JSON.parse(originalFile.contents.toString()).file;
+
+      if (files.hasOwnProperty(correspondingFile)) {
+        hash = files[correspondingFile];
+      } else {
+        sourcemaps[correspondingFile] = originalFile;
+        callback();
+        return;
+      }
+    }
+
+    if (hash == null) {
+      hash = revHash(originalFile.contents);
+    }
+
     originalFile.path = rename(originalFile.path, hash);
     this.push(originalFile);
+
+    if (isSourceMap) {
+      callback();
+      return;
+    }
+
+    if (sourcemaps.hasOwnProperty(originalFileName)) {
+      var sourcemap = sourcemaps[originalFileName];
+      sourcemap.path = rename(sourcemap.path, hash);
+      this.push(sourcemap);
+    } else {
+      files[originalFileName] = hash;
+    }
 
     // the original file's path property is mutated
     // after it has been pushed so it now holds its new path

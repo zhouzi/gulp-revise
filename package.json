@@ -9,7 +9,8 @@
     "test": "gulp --gulpfile test/gulpfile.js"
   },
   "devDependencies": {
-    "gulp": "3.9.1"
+    "gulp": "3.9.1",
+    "gulp-sourcemaps": "1.6.0"
   },
   "dependencies": {
     "rev-hash": "1.0.0"
