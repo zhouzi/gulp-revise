@@ -6,8 +6,9 @@ gulp.task('default', function () {
   return gulp
     .src('scripts.js')
     .pipe(sourcemaps.init())
-    .pipe(sourcemaps.write('.'))
     .pipe(revision())
+    .pipe(sourcemaps.write('.'))
+    .pipe(revision.write())
     .pipe(gulp.dest('dist'))
   ;
 });
