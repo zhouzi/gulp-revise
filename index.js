@@ -54,7 +54,7 @@ function write (pth) {
       this.push(revisionFile);
 
       if (pth == null) {
-        callback();
+        callback(new gutil.PluginError('gulp-revision', 'revision.write needs the output path to delete old revisions'));
         return;
       }
 
