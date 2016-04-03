@@ -12,3 +12,11 @@ gulp.task('default', function () {
     .pipe(gulp.dest('dist'))
   ;
 });
+
+gulp.task('merge', function () {
+  return gulp
+    .src('dist/*.rev')
+    .pipe(revision.merge())
+    .pipe(gulp.dest('dist'))
+  ;
+});
