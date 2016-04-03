@@ -53,10 +53,11 @@ function write () {
       var originalName = path.basename(file.beforeRev);
       var revisionDir = path.dirname(file.path);
       var revisionPath = path.join(revisionDir, originalName + '.rev');
+      var newRevisionName = path.basename(file.path);
 
       var revisionFile = new gutil.File();
       revisionFile.path = revisionPath;
-      revisionFile.contents = new Buffer(originalName);
+      revisionFile.contents = new Buffer(newRevisionName);
       this.push(revisionFile);
 
       fs.readFile(revisionPath, 'utf8', function (err, oldRevisionName) {
@@ -66,7 +67,7 @@ function write () {
           return;
         }
 
-        if (path.basename(file.path) == oldRevisionName) {
+        if (newRevisionName == oldRevisionName) {
           // if the old file name is the same as the new one
           // then we shouldn't delete it
           callback();
