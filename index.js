@@ -46,14 +46,10 @@ function write (pth) {
         return;
       }
 
-      var originalName = path.basename(file.beforeRev);
-      var revisionDir = path.dirname(file.path);
-      var revisionName = originalName + '.rev';
-      var revisionPath = path.join(revisionDir, revisionName);
       var newRevisionName = path.basename(file.path);
-
       var revisionFile = new gutil.File();
-      revisionFile.path = revisionPath;
+      var revisionFileName = path.basename(file.beforeRev) + '.rev';
+      revisionFile.path = path.join(path.dirname(file.path), revisionFileName);
       revisionFile.contents = new Buffer(newRevisionName);
       this.push(revisionFile);
 
@@ -63,7 +59,7 @@ function write (pth) {
       }
 
       var outputDir = path.join(process.cwd(), pth);
-      var pathToRevision = path.join(outputDir, revisionName);
+      var pathToRevision = path.join(outputDir, revisionFileName);
       fs.readFile(pathToRevision, 'utf8', function (err, currentVersion) {
         if (err) {
           callback();
