@@ -34,6 +34,7 @@ gulp.task('default', function () {
     .pipe(sourcemaps.init())
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
+    .pipe(revise())
     .pipe(revise.write('dist'))
     .pipe(gulp.dest('dist'))
   ;
