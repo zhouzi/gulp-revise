@@ -2,7 +2,7 @@
 
 Opinionated, straight to the point assets revisioning.
 
-**Mostly inspired by [gulp-rev](https://github.com/sindresorhus/gulp-rev).**
+*Mostly inspired by [gulp-rev](https://github.com/sindresorhus/gulp-rev).*
 
 ## Example
 
@@ -51,3 +51,9 @@ vendors_d41d8cd98f.js
 ```
 app_273c2cin3f.js
 ```
+
+## Change Log
+
+### v0.0.1 - 2016-04-04
+
+*First release.*
