@@ -1,10 +1,16 @@
 {
   "name": "gulp-revision",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Opinionated, straight to the point assets revisioning.",
   "main": "index.js",
   "author": "Gabin",
   "license": "MIT",
+  "files": [
+    "index.js",
+    "LICENSE",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "test": "mocha test.js"
   },
