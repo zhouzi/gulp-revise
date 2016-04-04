@@ -41,19 +41,20 @@ function write (pth) {
         return;
       }
 
-      var newRevisionName = path.basename(file.path);
-      var revisionFile = new gutil.File();
-      var revisionFileName = path.basename(file.beforeRev) + '.rev';
-      revisionFile.path = path.join(path.dirname(file.path), revisionFileName);
-      revisionFile.contents = new Buffer(newRevisionName);
-      this.push(revisionFile);
-
       if (pth == null) {
-        callback(new gutil.PluginError('gulp-revision', 'revision.write needs the output path to delete old revisions'));
+        callback(new gutil.PluginError('gulp-revision', 'required argument "path" for revision.write() is missing'));
         return;
       }
 
       var outputDir = path.join(process.cwd(), pth);
+      var revisionFileName = path.basename(file.beforeRev) + '.rev';
+      var newRevisionName = path.basename(file.path);
+
+      this.push(new gutil.File({
+        path: path.join(outputDir, revisionFileName),
+        contents: new Buffer(newRevisionName)
+      }));
+
       var pathToRevision = path.join(outputDir, revisionFileName);
       fs.readFile(pathToRevision, 'utf8', function (err, currentVersion) {
         if (err) {

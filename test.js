@@ -74,7 +74,7 @@ describe('revision.write()', function () {
     var stream = revision.write();
 
     stream.on('error', function (err) {
-      assert.equal(err.message, 'revision.write needs the output path to delete old revisions');
+      assert.equal(err.message, 'required argument "path" for revision.write() is missing');
     });
 
     var file = new gutil.File({
@@ -93,7 +93,7 @@ describe('revision.write()', function () {
 
     stream.on('data', function (file) {
       if (pushedOriginalFile) {
-        assert.equal(file.path, 'src/app.js.rev');
+        assert.equal(file.path, path.join(__dirname, 'dist/app.js.rev'));
         assert.equal(file.contents.toString(), 'app_d41d8cd98f.js');
         return;
       }
