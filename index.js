@@ -5,17 +5,12 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var del = require('del');
 
-// we need to implement a custom rename function
-// to deal with file names such as scripts.js.map
-// where the usual path.ext would return ".map"
 function rename (name, suffix) {
   var dir = path.dirname(name);
-  var fileName = path.basename(name);
-  var partials = fileName.split('.');
-  var root = partials[0];
-  var exts = partials.slice(1).map(function (ext) { return '.' + ext; }).join('');
+  var ext = path.extname(name);
+  var fileName = path.basename(name, ext);
 
-  return path.join(dir, root + '_' + suffix + exts);
+  return path.join(dir, fileName + '_' + suffix + ext);
 }
 
 function revision () {
