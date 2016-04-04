@@ -1,6 +1,6 @@
 {
   "name": "gulp-revise",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Opinionated, straight to the point assets revisioning.",
   "main": "index.js",
   "author": "Gabin",
@@ -14,6 +14,20 @@
   "scripts": {
     "test": "mocha test.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zhouzi/gulp-revise.git"
+  },
+  "keywords": [
+    "gulpplugin",
+    "assets",
+    "revision",
+    "cache"
+  ],
+  "bugs": {
+    "url": "https://github.com/Zhouzi/gulp-revise/issues"
+  },
+  "homepage": "https://github.com/Zhouzi/gulp-revise",
   "devDependencies": {
     "gulp": "3.9.1",
     "gulp-sourcemaps": "1.6.0",

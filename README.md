@@ -55,6 +55,10 @@ app_273c2cin3f.js
 
 ## Change Log
 
+### v0.0.2 - 2016-04-04
+
+* Update documentation and related links.
+
 ### v0.0.1 - 2016-04-04
 
 *First release.*
