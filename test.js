@@ -5,11 +5,11 @@ var gutil = require('gulp-util');
 var proxyquire = require('proxyquire');
 var fs = sinon.stub(require('fs'), 'readFile');
 var del = sinon.stub().returns(Promise.resolve());
-var revision = proxyquire('./index', { fs: fs, del: del });
+var revise = proxyquire('./index', { fs: fs, del: del });
 
-describe('revision()', function () {
+describe('revise()', function () {
   it('should revision the files', function () {
-    var stream = revision();
+    var stream = revise();
 
     stream.on('data', function (file) {
       assert.equal(file.path, 'src/app_d41d8cd98f.js');
@@ -23,7 +23,7 @@ describe('revision()', function () {
   });
 
   it('should throw an error if sourcemaps are created before the revision', function () {
-    var stream = revision();
+    var stream = revise();
 
     stream.on('error', function (err) {
       assert.equal(err.message, 'sourcemaps must be created after the revision');
@@ -36,7 +36,7 @@ describe('revision()', function () {
   });
 
   it('should work with files that have dots in their name', function () {
-    var stream = revision();
+    var stream = revise();
 
     stream.on('data', function (file) {
       assert.equal(file.path, 'src/app.min_d41d8cd98f.js');
@@ -50,7 +50,7 @@ describe('revision()', function () {
   });
 
   it('should work with directories that have dots in their name', function () {
-    var stream = revision();
+    var stream = revise();
 
     stream.on('data', function (file) {
       assert.equal(file.path, 'website.io/app_d41d8cd98f.js');
@@ -64,17 +64,17 @@ describe('revision()', function () {
   });
 });
 
-describe('revision.write()', function () {
+describe('revise.write()', function () {
   afterEach(function () {
     fs.readFile.reset();
     del.reset();
   });
 
   it('should throw an error if output path is missing', function () {
-    var stream = revision.write();
+    var stream = revise.write();
 
     stream.on('error', function (err) {
-      assert.equal(err.message, 'required argument "dest path" for revision.write() is missing');
+      assert.equal(err.message, 'required argument "dest path" for revise.write() is missing');
     });
 
     var file = new gutil.File({
@@ -88,7 +88,7 @@ describe('revision.write()', function () {
   });
 
   it('should push the original file and create the .rev', function () {
-    var stream = revision.write('dist');
+    var stream = revise.write('dist');
     var pushedOriginalFile = false;
 
     stream.on('data', function (file) {
@@ -113,7 +113,7 @@ describe('revision.write()', function () {
   });
 
   it('should ignore files that miss the beforeRev prop', function () {
-    var stream = revision.write('dist');
+    var stream = revise.write('dist');
     var spy = sinon.stub();
 
     stream.on('data', spy);
@@ -127,7 +127,7 @@ describe('revision.write()', function () {
   });
 
   it('should read the existing revision', function () {
-    var stream = revision.write('dist');
+    var stream = revise.write('dist');
 
     var file = new gutil.File({
       path: 'src/app_d41d8cd98f.js',
@@ -142,7 +142,7 @@ describe('revision.write()', function () {
   });
 
   it('should delete the old revision', function () {
-    var stream = revision.write('dist');
+    var stream = revise.write('dist');
 
     var file = new gutil.File({
       path: 'src/app_d41d8cd98f.js',
@@ -164,7 +164,7 @@ describe('revision.write()', function () {
   });
 
   it('should not delete the old revision if it\'s the same as the new one', function () {
-    var stream = revision.write('dist');
+    var stream = revise.write('dist');
 
     var file = new gutil.File({
       path: 'src/app_d41d8cd98f.js',
@@ -180,9 +180,9 @@ describe('revision.write()', function () {
   });
 });
 
-describe('revision.merge()', function () {
+describe('revise.merge()', function () {
   it('should merge .rev files', function () {
-    var stream = revision.merge();
+    var stream = revise.merge();
 
     stream.on('data', function (file) {
       assert.equal(file.path, 'rev-manifest.json');

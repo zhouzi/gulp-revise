@@ -13,11 +13,11 @@ function rename (name, suffix) {
   return path.join(dir, fileName + '_' + suffix + ext);
 }
 
-function revision () {
+function revise () {
   return through.obj(
     function transform (file, encoding, callback) {
       if (path.extname(file.path) == '.map') {
-        callback(new gutil.PluginError('gulp-revision', 'sourcemaps must be created after the revision'));
+        callback(new gutil.PluginError('gulp-revise', 'sourcemaps must be created after the revision'));
         return;
       }
 
@@ -52,7 +52,7 @@ function write (pth) {
       }));
 
       if (pth == null) {
-        callback(new gutil.PluginError('gulp-revision', 'required argument "dest path" for revision.write() is missing'));
+        callback(new gutil.PluginError('gulp-revise', 'required argument "dest path" for revise.write() is missing'));
         return;
       }
 
@@ -99,6 +99,6 @@ function merge () {
   );
 }
 
-module.exports = revision;
+module.exports = revise;
 module.exports.write = write;
 module.exports.merge = merge;

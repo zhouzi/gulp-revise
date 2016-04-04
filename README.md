@@ -1,4 +1,4 @@
-# gulp-revision
+# gulp-revise
 
 Opinionated, straight to the point assets revisioning.
 
@@ -26,7 +26,7 @@ gulpfile.js
 var gulp = require('gulp');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
-var revision = require('gulp-revision');
+var revise = require('gulp-revise');
 
 gulp.task('default', function () {
   return gulp
@@ -34,7 +34,7 @@ gulp.task('default', function () {
     .pipe(sourcemaps.init())
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
-    .pipe(revision.write('dist'))
+    .pipe(revise.write('dist'))
     .pipe(gulp.dest('dist'))
   ;
 });
