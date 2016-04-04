@@ -93,7 +93,7 @@ describe('revision.write()', function () {
 
     stream.on('data', function (file) {
       if (pushedOriginalFile) {
-        assert.equal(file.path, 'app.js.rev');
+        assert.equal(file.path, path.join(__dirname, 'src/app.js.rev'));
         assert.equal(file.contents.toString(), 'app_d41d8cd98f.js');
         return;
       }
