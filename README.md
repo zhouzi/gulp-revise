@@ -45,16 +45,16 @@ gulp.task('default', function () {
 });
 ```
 
-**vendors.js.rev**
-
-```
-vendors_d41d8cd98f.js
-```
-
 **app.js.rev**
 
 ```
 app_273c2cin3f.js
+```
+
+**vendors.js.rev**
+
+```
+vendors_d41d8cd98f.js
 ```
 
 ## Documentation
@@ -74,6 +74,31 @@ The path to look for existing `.rev` file so it can delete old revisions.
 Should be the same as the one passed to `gulp.dest()`.
 
 Note: also delete the corresponding `.map` files.
+
+### revise.merge()
+
+Merge the `.rev` files in the stream to create a `rev-manifest.json` file, e.g:
+
+```javascript
+var gulp = require('gulp');
+var revise = require('gulp-revise');
+
+gulp.task('merge', function () {
+  return gulp
+    .src('dist/*.rev')
+    .pipe(revise.merge())
+    .pipe(gulp.dest(''));
+});
+```
+
+`rev-manifest.json` looks like this:
+
+```json
+{
+  "app.js": "app_273c2cin3f.js",
+  "vendors.js": "vendors_d41d8cd98f"
+}
+```
 
 ## Change Log
 
