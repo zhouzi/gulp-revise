@@ -102,6 +102,10 @@ gulp.task('merge', function () {
 
 ## Change Log
 
+### v0.0.4 - 2016-04-12
+
+* Fixed an issue regarding the generation of source maps.
+
 ### v0.0.3 - 2016-04-05
 
 * Update documentation.
