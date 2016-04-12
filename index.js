@@ -25,6 +25,11 @@ function revise () {
 
       file.beforeRev = file.path;
       file.path = rename(file.path, hash);
+
+      if (file.sourceMap) {
+        file.sourceMap.file = file.relative;
+      }
+
       this.push(file);
       callback();
     }
