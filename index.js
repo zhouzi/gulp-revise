@@ -16,6 +16,16 @@ function rename (name, suffix) {
 function revise () {
   return through.obj(
     function transform (file, encoding, callback) {
+      if (file.isNull()) {
+        callback(null, file);
+        return;
+      }
+
+      if (file.isStream()) {
+        callback(new gutil.PluginError('gulp-revise', 'streams are not supported'));
+        return;
+      }
+
       if (path.extname(file.path) == '.map') {
         callback(new gutil.PluginError('gulp-revise', 'sourcemaps must be created after the revision'));
         return;
