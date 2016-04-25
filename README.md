@@ -100,7 +100,20 @@ gulp.task('merge', function () {
 }
 ```
 
+### revise.restore(path)
+
+Rename the files after their .rev if it exists.
+Particularly useful for tools like live reloading.
+
+#### path
+
+The path to the .rev files, should be the same as the one passed to `gulp.dest()`.
+
 ## Change Log
+
+### v0.0.6 - Unreleased
+
+* [ ] Add `restore()` to rename files after their .rev
 
 ### v0.0.5 - 2016-04-16
 

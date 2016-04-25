@@ -206,3 +206,24 @@ describe('revise.merge()', function () {
     stream.end();
   })
 });
+
+describe('revise.restore()', function () {
+  afterEach(function () {
+    fs.readFile.reset();
+  });
+
+  it('should rename the files according to its .rev', function () {
+    var stream = revise.restore('dist');
+
+    stream.on('data', function (file) {
+      assert.equal(file.path, 'src/app_123.js');
+    });
+
+    stream.write(new gutil.File({
+      path: 'src/app.js',
+      contents: new Buffer('')
+    }));
+
+    fs.readFile.callArgWith(2, null, 'app_123.js');
+  });
+});
