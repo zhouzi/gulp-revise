@@ -111,9 +111,9 @@ The path to the .rev files, should be the same as the one passed to `gulp.dest()
 
 ## Change Log
 
-### v0.0.6 - Unreleased
+### v0.0.6 - 2016-04-26
 
-* [ ] Add `restore()` to rename files after their .rev
+* Add `restore()` to rename files after their .rev
 
 ### v0.0.5 - 2016-04-16
 
