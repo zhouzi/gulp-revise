@@ -100,16 +100,28 @@ gulp.task('merge', function () {
 }
 ```
 
-### revise.restore(path)
+### revise.noop()
 
-Rename the files after their .rev if it exists.
-Particularly useful for tools like live reloading.
+noop utility that just adds the required props to the files for `.write()` to work as usual.
+That way the `.rev` files are properly updated with the file's name, no hash added.
 
-#### path
+Example:
 
-The path to the .rev files, should be the same as the one passed to `gulp.dest()`.
+```javascript
+// var revise = require('gulp-revise');
+if (isWatching) {
+  stream = stream.pipe(revise.noop());
+} else {
+  stream = stream.pipe(revise());
+}
+```
 
 ## Change Log
+
+### v1.0.0 - 2016-08-19
+
+* Remove `restore()`
+* Add `noop()` as a replacement for `restore()`
 
 ### v0.0.6 - 2016-04-26
 
