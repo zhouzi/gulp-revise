@@ -1,6 +1,6 @@
 {
   "name": "gulp-revise",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Opinionated, straight to the point assets revisioning.",
   "main": "index.js",
   "author": "Gabin",
