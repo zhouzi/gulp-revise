@@ -17,40 +17,23 @@ describe('write()', function () {
     del.reset();
   });
 
-  it('should throw an error if output path is missing', function () {
-    var stream = write();
-
-    stream.on('error', function (err) {
-      assert.equal(err.message, 'required argument "dest path" for revise.write() is missing');
-    });
-
-    var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
-      contents: new Buffer('')
-    });
-
-    file.beforeRev = 'src/app.js';
-
-    stream.write(file);
-  });
-
   it('should push the original file and create the .rev', function () {
-    var stream = write('dist');
+    var stream = write();
     var pushedOriginalFile = false;
 
     stream.on('data', function (file) {
       if (pushedOriginalFile) {
-        assert.equal(file.path, path.join(__dirname, '../src/app.js.rev'));
+        assert.equal(file.path, path.join(__dirname, '../dist/app.js.rev'));
         assert.equal(file.contents.toString(), 'app_d41d8cd98f.js');
         return;
       }
 
       pushedOriginalFile = true;
-      assert.equal(file.path, 'src/app_d41d8cd98f.js');
+      assert.equal(file.path, 'dist/app_d41d8cd98f.js');
     });
 
     var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
+      path: 'dist/app_d41d8cd98f.js',
       contents: new Buffer('')
     });
 
@@ -60,7 +43,7 @@ describe('write()', function () {
   });
 
   it('should ignore files that miss the beforeRev prop', function () {
-    var stream = write('dist');
+    var stream = write();
     var spy = sinon.stub();
 
     stream.on('data', spy);
@@ -74,10 +57,10 @@ describe('write()', function () {
   });
 
   it('should read the existing revision', function () {
-    var stream = write('dist');
+    var stream = write();
 
     var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
+      path: 'dist/app_d41d8cd98f.js',
       contents: new Buffer('')
     });
 
@@ -89,10 +72,10 @@ describe('write()', function () {
   });
 
   it('should delete the old revision', function () {
-    var stream = write('dist');
+    var stream = write();
 
     var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
+      path: 'dist/app_d41d8cd98f.js',
       contents: new Buffer('')
     });
 
@@ -111,10 +94,10 @@ describe('write()', function () {
   });
 
   it('should not delete the old revision if it\'s the same as the new one', function () {
-    var stream = write('dist');
+    var stream = write();
 
     var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
+      path: 'dist/app_d41d8cd98f.js',
       contents: new Buffer('')
     });
 
