@@ -120,7 +120,9 @@ if (isWatching) {
 
 ### v1.1.0 - 2016-12-01
 
-* `write()` no more requires the dest path (also fixes [#3](https://github.com/Zhouzi/gulp-revise/issues/3))
+* ~~`write()` no more requires the dest path (also fixes [#3](https://github.com/Zhouzi/gulp-revise/issues/3))~~
+
+*Sadly, this version actually introduced a regression.*
 
 ### v1.0.0 - 2016-08-19
 
