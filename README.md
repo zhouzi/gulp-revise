@@ -39,7 +39,7 @@ gulp.task('default', function () {
     .pipe(uglify())
     .pipe(revise())
     .pipe(sourcemaps.write('.'))
-    .pipe(revise.write('dist'))
+    .pipe(revise.write())
     .pipe(gulp.dest('dist'))
   ;
 });
@@ -63,7 +63,7 @@ vendors_d41d8cd98f.js
 
 Adds the `_hash` suffix to the files in the stream (`hash` being the md5 of the file's content).
 
-### revise.write(path)
+### revise.write()
 
 For each files that have been revised, creates a `.rev` file that contains the file's name.
 e.g `app.js` is renamed to `app_273c2cin3f.js` so the `app.js.rev` contains `app_273c2cin3f.js`.
@@ -117,6 +117,10 @@ if (isWatching) {
 ```
 
 ## Change Log
+
+### v1.1.0 - 2016-12-01
+
+* `write()` no more requires the dest path (also fixes [#3](https://github.com/Zhouzi/gulp-revise/issues/3))
 
 ### v1.0.0 - 2016-08-19
 
