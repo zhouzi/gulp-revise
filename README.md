@@ -118,6 +118,10 @@ if (isWatching) {
 
 ## Change Log
 
+### v1.1.1 - 2016-12-03
+
+* fix `write()` to work with sub directories [#3](https://github.com/Zhouzi/gulp-revise/issues/3)
+
 ### v1.1.0 - 2016-12-01
 
 * ~~`write()` no more requires the dest path (also fixes [#3](https://github.com/Zhouzi/gulp-revise/issues/3))~~
