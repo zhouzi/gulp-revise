@@ -7,6 +7,7 @@ var fs = require('fs');
 var del = sinon.stub().returns(Promise.resolve());
 var write = proxyquire('../lib/write', { fs: fs, del: del });
 var verbose = true;
+var dirname = path.join(__dirname, '../');
 
 describe('write()', function () {
   var fakeFileName;
@@ -77,7 +78,7 @@ describe('write()', function () {
       stream.write(createFile(fakeFilePath));
 
       assert.equal(fs.readFile.callCount, 1);
-      assert.equal(fs.readFile.firstCall.args[0], path.join(__dirname, '../dist', 'app.js.rev'));
+      assert.equal(fs.readFile.firstCall.args[0], path.join(dirname, 'dist', 'app.js.rev'));
     });
 
     it('should delete the old revision', function () {
@@ -87,8 +88,8 @@ describe('write()', function () {
       assert.equal(del.callCount, 1);
       assert.deepEqual(del.firstCall.args, [
         [
-          path.join(__dirname, '../dist', 'app_abcdef.js'),
-          path.join(__dirname, '../dist', 'app_abcdef.js.map')
+          path.join(dirname, 'dist', 'app_abcdef.js'),
+          path.join(dirname, 'dist', 'app_abcdef.js.map')
         ]
       ]);
     });
@@ -104,13 +105,13 @@ describe('write()', function () {
 
 function createFile (pth, omitBeforeRev) {
   var file = new gutil.File({
-    path: path.join(__dirname, pth),
+    path: path.join(dirname, pth),
     contents: new Buffer('')
   });
 
   if (!omitBeforeRev) {
     var beforeRev = pth.substr(0, pth.lastIndexOf('_')) + path.extname(pth);
-    file.beforeRev = path.join(__dirname, beforeRev);
+    file.beforeRev = path.join(dirname, beforeRev);
   }
 
   return file;
