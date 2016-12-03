@@ -100,12 +100,39 @@ describe('write()', function () {
 
       assert.equal(del.callCount, 0);
     });
+
+    describe('with sub directories', function () {
+      it('should read the existing revision', function () {
+        stream.write(createFile(fakeFilePath, false, 'webapp'));
+
+        assert.equal(fs.readFile.callCount, 1);
+        assert.equal(fs.readFile.firstCall.args[0], path.join(dirname, 'dist/webapp', 'app.js.rev'));
+      });
+
+      it('should delete the old revision', function () {
+        stream.write(createFile(fakeFilePath, false, 'webapp'));
+        fs.readFile.callArgWith(2, null, 'app_abcdef.js');
+
+        assert.equal(del.callCount, 1);
+        assert.deepEqual(del.firstCall.args, [
+          [
+            path.join(dirname, 'dist/webapp', 'app_abcdef.js'),
+            path.join(dirname, 'dist/webapp', 'app_abcdef.js.map')
+          ]
+        ]);
+      });
+    });
   });
 });
 
-function createFile (pth, omitBeforeRev) {
+function createFile (pth, omitBeforeRev, subfolder) {
   var fullPath = path.join(dirname, pth);
   var pathDir = path.dirname(fullPath);
+
+  if (subfolder) {
+    fullPath = path.join(pathDir, subfolder, path.basename(fullPath));
+  }
+
   var file = new gutil.File({
     cwd: dirname,
     base: pathDir,
