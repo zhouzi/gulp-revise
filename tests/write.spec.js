@@ -6,6 +6,7 @@ var proxyquire = require('proxyquire');
 var fs = require('fs');
 var del = sinon.stub().returns(Promise.resolve());
 var write = proxyquire('../lib/write', { fs: fs, del: del });
+var verbose = true;
 
 describe('write()', function () {
   beforeEach(function () {
@@ -18,7 +19,7 @@ describe('write()', function () {
   });
 
   it('should throw an error if output path is missing', function () {
-    var stream = write();
+    var stream = write(null, verbose);
 
     stream.on('error', function (err) {
       assert.equal(err.message, 'required argument "dest path" for revise.write() is missing');
@@ -35,7 +36,7 @@ describe('write()', function () {
   });
 
   it('should push the original file and create the .rev', function () {
-    var stream = write('dist');
+    var stream = write('dist', verbose);
     var pushedOriginalFile = false;
 
     stream.on('data', function (file) {
@@ -60,7 +61,7 @@ describe('write()', function () {
   });
 
   it('should ignore files that miss the beforeRev prop', function () {
-    var stream = write('dist');
+    var stream = write('dist', verbose);
     var spy = sinon.stub();
 
     stream.on('data', spy);
@@ -74,7 +75,7 @@ describe('write()', function () {
   });
 
   it('should read the existing revision', function () {
-    var stream = write('dist');
+    var stream = write('dist', verbose);
 
     var file = new gutil.File({
       path: 'src/app_d41d8cd98f.js',
@@ -89,7 +90,7 @@ describe('write()', function () {
   });
 
   it('should delete the old revision', function () {
-    var stream = write('dist');
+    var stream = write('dist', verbose);
 
     var file = new gutil.File({
       path: 'src/app_d41d8cd98f.js',
@@ -111,7 +112,7 @@ describe('write()', function () {
   });
 
   it('should not delete the old revision if it\'s the same as the new one', function () {
-    var stream = write('dist');
+    var stream = write('dist', verbose);
 
     var file = new gutil.File({
       path: 'src/app_d41d8cd98f.js',
