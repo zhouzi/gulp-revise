@@ -104,14 +104,17 @@ describe('write()', function () {
 });
 
 function createFile (pth, omitBeforeRev) {
+  var fullPath = path.join(dirname, pth);
+  var pathDir = path.dirname(fullPath);
   var file = new gutil.File({
-    path: path.join(dirname, pth),
+    cwd: dirname,
+    base: pathDir,
+    path: fullPath,
     contents: new Buffer('')
   });
 
   if (!omitBeforeRev) {
-    var beforeRev = pth.substr(0, pth.lastIndexOf('_')) + path.extname(pth);
-    file.beforeRev = path.join(dirname, beforeRev);
+    file.beforeRev = fullPath.substr(0, fullPath.lastIndexOf('_')) + path.extname(fullPath);
   }
 
   return file;
