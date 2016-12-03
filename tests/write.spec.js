@@ -9,8 +9,14 @@ var write = proxyquire('../lib/write', { fs: fs, del: del });
 var verbose = true;
 
 describe('write()', function () {
+  var fakeFileName;
+  var fakeFilePath;
+
   beforeEach(function () {
     sinon.stub(fs, 'readFile');
+
+    fakeFileName = 'app_d41d8cd98f.js';
+    fakeFilePath = path.join('src', fakeFileName);
   });
 
   afterEach(function () {
@@ -18,115 +24,94 @@ describe('write()', function () {
     del.reset();
   });
 
-  it('should throw an error if output path is missing', function () {
-    var stream = write(null, verbose);
+  describe('with an invalid configuration', function () {
+    it('should throw an error if output path is missing', function () {
+      var stream = write(null, verbose);
 
-    stream.on('error', function (err) {
-      assert.equal(err.message, 'required argument "dest path" for revise.write() is missing');
+      stream.on('error', function (err) {
+        assert.equal(err.message, 'required argument "dest path" for revise.write() is missing');
+      });
+
+      stream.write(createFile(fakeFilePath));
     });
-
-    var file = new gutil.File({
-      path: path.join(__dirname, 'src/app_d41d8cd98f.js'),
-      contents: new Buffer('')
-    });
-
-    file.beforeRev = path.join(__dirname, 'src/app.js');
-
-    stream.write(file);
   });
 
-  it('should push the original file and create the .rev', function () {
-    var stream = write('dist', verbose);
-    var pushedOriginalFile = false;
-    var filePath = path.join(__dirname, 'src/app_d41d8cd98f.js');
-    var revFilePath = path.join(path.dirname(filePath), 'app.js.rev');
-    var beforeRev = path.join(path.dirname(filePath), 'app.js');
+  describe('with a valid configuration', function () {
+    var stream;
 
-    stream.on('data', function (file) {
-      if (pushedOriginalFile) {
-        assert.equal(file.path, revFilePath);
-        assert.equal(file.contents.toString(), 'app_d41d8cd98f.js');
-        return;
-      }
-
-      pushedOriginalFile = true;
-      assert.equal(file.path, filePath);
+    beforeEach(function () {
+      stream = write('dist', verbose);
     });
 
-    var file = new gutil.File({
-      path: filePath,
-      contents: new Buffer('')
+    it('should push the original file and create the .rev', function () {
+      var file = createFile(fakeFilePath);
+      var filePath = file.path;
+      var fileDir = path.dirname(filePath);
+      var revFilePath = path.join(fileDir, 'app.js.rev');
+      var pushedOriginalFile = false;
+
+      stream.on('data', function (file) {
+        if (pushedOriginalFile) {
+          assert.equal(file.path, revFilePath);
+          assert.equal(file.contents.toString(), fakeFileName);
+          return;
+        }
+
+        pushedOriginalFile = true;
+        assert.equal(file.path, filePath);
+      });
+
+      stream.write(file);
     });
 
-    file.beforeRev = beforeRev;
+    it('should ignore files that miss the beforeRev prop', function () {
+      var spy = sinon.stub();
 
-    stream.write(file);
-  });
+      stream.on('data', spy);
+      stream.write(createFile('src/app.js', true));
 
-  it('should ignore files that miss the beforeRev prop', function () {
-    var stream = write('dist', verbose);
-    var spy = sinon.stub();
-
-    stream.on('data', spy);
-
-    stream.write(new gutil.File({
-      path: path.join(__dirname, 'src/app.js'),
-      contents: new Buffer('')
-    }));
-
-    assert.equal(spy.callCount, 1);
-  });
-
-  it('should read the existing revision', function () {
-    var stream = write('dist', verbose);
-
-    var file = new gutil.File({
-      path: path.join(__dirname, 'src/app_d41d8cd98f.js'),
-      contents: new Buffer('')
+      assert.equal(spy.callCount, 1);
     });
 
-    file.beforeRev = path.join(__dirname, 'src/app.js');
-    stream.write(file);
+    it('should read the existing revision', function () {
+      stream.write(createFile(fakeFilePath));
 
-    assert.equal(fs.readFile.callCount, 1);
-    assert.equal(fs.readFile.firstCall.args[0], path.join(__dirname, '../dist', 'app.js.rev'));
-  });
-
-  it('should delete the old revision', function () {
-    var stream = write('dist', verbose);
-
-    var file = new gutil.File({
-      path: path.join(__dirname, 'src/app_d41d8cd98f.js'),
-      contents: new Buffer('')
+      assert.equal(fs.readFile.callCount, 1);
+      assert.equal(fs.readFile.firstCall.args[0], path.join(__dirname, '../dist', 'app.js.rev'));
     });
 
-    file.beforeRev = path.join(__dirname, 'src/app.js');
-    stream.write(file);
+    it('should delete the old revision', function () {
+      stream.write(createFile(fakeFilePath));
+      fs.readFile.callArgWith(2, null, 'app_abcdef.js');
 
-    fs.readFile.callArgWith(2, null, 'app_abcdef.js');
-
-    assert.equal(del.callCount, 1);
-    assert.deepEqual(del.firstCall.args, [
-      [
-        path.join(__dirname, '../dist', 'app_abcdef.js'),
-        path.join(__dirname, '../dist', 'app_abcdef.js.map')
-      ]
-    ]);
-  });
-
-  it('should not delete the old revision if it\'s the same as the new one', function () {
-    var stream = write('dist', verbose);
-
-    var file = new gutil.File({
-      path: path.join(__dirname, 'src/app_d41d8cd98f.js'),
-      contents: new Buffer('')
+      assert.equal(del.callCount, 1);
+      assert.deepEqual(del.firstCall.args, [
+        [
+          path.join(__dirname, '../dist', 'app_abcdef.js'),
+          path.join(__dirname, '../dist', 'app_abcdef.js.map')
+        ]
+      ]);
     });
 
-    file.beforeRev = path.join(__dirname, 'src/app.js');
-    stream.write(file);
+    it('should not delete the old revision if it\'s the same as the new one', function () {
+      stream.write(createFile(fakeFilePath));
+      fs.readFile.callArgWith(2, null, fakeFileName);
 
-    fs.readFile.callArgWith(2, null, 'app_d41d8cd98f.js');
-
-    assert.equal(del.callCount, 0);
+      assert.equal(del.callCount, 0);
+    });
   });
 });
+
+function createFile (pth, omitBeforeRev) {
+  var file = new gutil.File({
+    path: path.join(__dirname, pth),
+    contents: new Buffer('')
+  });
+
+  if (!omitBeforeRev) {
+    var beforeRev = pth.substr(0, pth.lastIndexOf('_')) + path.extname(pth);
+    file.beforeRev = path.join(__dirname, beforeRev);
+  }
+
+  return file;
+}
