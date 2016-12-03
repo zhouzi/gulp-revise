@@ -26,11 +26,11 @@ describe('write()', function () {
     });
 
     var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
+      path: path.join(__dirname, 'src/app_d41d8cd98f.js'),
       contents: new Buffer('')
     });
 
-    file.beforeRev = 'src/app.js';
+    file.beforeRev = path.join(__dirname, 'src/app.js');
 
     stream.write(file);
   });
@@ -38,24 +38,27 @@ describe('write()', function () {
   it('should push the original file and create the .rev', function () {
     var stream = write('dist', verbose);
     var pushedOriginalFile = false;
+    var filePath = path.join(__dirname, 'src/app_d41d8cd98f.js');
+    var revFilePath = path.join(path.dirname(filePath), 'app.js.rev');
+    var beforeRev = path.join(path.dirname(filePath), 'app.js');
 
     stream.on('data', function (file) {
       if (pushedOriginalFile) {
-        assert.equal(file.path, path.join(__dirname, '../src/app.js.rev'));
+        assert.equal(file.path, revFilePath);
         assert.equal(file.contents.toString(), 'app_d41d8cd98f.js');
         return;
       }
 
       pushedOriginalFile = true;
-      assert.equal(file.path, 'src/app_d41d8cd98f.js');
+      assert.equal(file.path, filePath);
     });
 
     var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
+      path: filePath,
       contents: new Buffer('')
     });
 
-    file.beforeRev = 'src/app.js';
+    file.beforeRev = beforeRev;
 
     stream.write(file);
   });
@@ -67,7 +70,7 @@ describe('write()', function () {
     stream.on('data', spy);
 
     stream.write(new gutil.File({
-      path: 'src/app.js',
+      path: path.join(__dirname, 'src/app.js'),
       contents: new Buffer('')
     }));
 
@@ -78,11 +81,11 @@ describe('write()', function () {
     var stream = write('dist', verbose);
 
     var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
+      path: path.join(__dirname, 'src/app_d41d8cd98f.js'),
       contents: new Buffer('')
     });
 
-    file.beforeRev = 'src/app.js';
+    file.beforeRev = path.join(__dirname, 'src/app.js');
     stream.write(file);
 
     assert.equal(fs.readFile.callCount, 1);
@@ -93,11 +96,11 @@ describe('write()', function () {
     var stream = write('dist', verbose);
 
     var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
+      path: path.join(__dirname, 'src/app_d41d8cd98f.js'),
       contents: new Buffer('')
     });
 
-    file.beforeRev = 'src/app.js';
+    file.beforeRev = path.join(__dirname, 'src/app.js');
     stream.write(file);
 
     fs.readFile.callArgWith(2, null, 'app_abcdef.js');
@@ -115,11 +118,11 @@ describe('write()', function () {
     var stream = write('dist', verbose);
 
     var file = new gutil.File({
-      path: 'src/app_d41d8cd98f.js',
+      path: path.join(__dirname, 'src/app_d41d8cd98f.js'),
       contents: new Buffer('')
     });
 
-    file.beforeRev = 'src/app.js';
+    file.beforeRev = path.join(__dirname, 'src/app.js');
     stream.write(file);
 
     fs.readFile.callArgWith(2, null, 'app_d41d8cd98f.js');
