@@ -75,7 +75,7 @@ Should be the same as the one passed to `gulp.dest()`.
 
 Note: also delete the corresponding `.map` files.
 
-### revise.merge()
+### revise.merge(basePath = process.cwd())
 
 Merge the `.rev` files in the stream to create a `rev-manifest.json` file, e.g:
 
@@ -92,6 +92,30 @@ gulp.task('merge', function () {
 ```
 
 `rev-manifest.json` looks like this:
+
+```json
+{
+  "dist/app.js": "dist/app_273c2cin3f.js",
+  "dist/vendors.js": "dist/vendors_d41d8cd98f"
+}
+```
+
+By default, basePath is set to `process.cwd()` which assumes the current working directory to be the root.
+However, you can pass a custom base path, e.g:
+
+```javascript
+var gulp = require('gulp');
+var revise = require('gulp-revise');
+
+gulp.task('merge', function () {
+  return gulp
+    .src('dist/*.rev')
+    .pipe(revise.merge('dist'))
+    .pipe(gulp.dest(''));
+});
+```
+
+Will result in:
 
 ```json
 {
@@ -117,6 +141,11 @@ if (isWatching) {
 ```
 
 ## Change Log
+
+### v2.0.0 - 2017-02-16
+
+* Add basePath option to `.merge()`
+  * This is a breaking change: the path to the file was not added until now. If you still want to just have the file names, pass the base path as an argument to `.merge()`.
 
 ### v1.1.1 - 2016-12-03
 
