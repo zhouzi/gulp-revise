@@ -10,6 +10,31 @@ describe('merge()', function () {
       assert.equal(file.path, 'rev-manifest.json');
 
       assert.deepEqual({
+        'dist/vendors.js': 'dist/vendors_123.js',
+        'dist/app.js': 'dist/app_456.js'
+      }, JSON.parse(file.contents.toString()));
+    });
+
+    stream.write(new gutil.File({
+      path: 'dist/vendors.js.rev',
+      contents: new Buffer('vendors_123.js')
+    }));
+
+    stream.write(new gutil.File({
+      path: 'dist/app.js.rev',
+      contents: new Buffer('app_456.js')
+    }));
+
+    stream.end();
+  });
+
+  it('should remove provided base path from file paths', function () {
+    var stream = merge('dist');
+
+    stream.on('data', function (file) {
+      assert.equal(file.path, 'rev-manifest.json');
+
+      assert.deepEqual({
         'vendors.js': 'vendors_123.js',
         'app.js': 'app_456.js'
       }, JSON.parse(file.contents.toString()));
@@ -26,5 +51,5 @@ describe('merge()', function () {
     }));
 
     stream.end();
-  })
+  });
 });
